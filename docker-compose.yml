@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  voter:
+    image: voter:local
+    network_mode: host
+    #entrypoint: ['/bin/sleep', 'infinity']
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+    - ./:/app
+
