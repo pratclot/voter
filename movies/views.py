@@ -2,10 +2,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from pprint import pprint
 
-from .models import Choice, Question
+from .models import Choice, Question, Voters
 
 
 class AuthListView(LoginRequiredMixin, generic.ListView):
@@ -36,10 +36,21 @@ class ResultsView(AuthDetailView):
 
 
 def vote(request, question_id):
-    ... # same as above, no changes needed.
+    ...  # same as above, no changes needed.
     question = get_object_or_404(Question, pk=question_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        selected = request.POST.getlist('choice')
+    except Exception as e:
+        print(e)
+    try:
+        selected_choice = [
+            question.choice_set.get(pk=x) for x in selected
+        ]
+        if len(selected_choice) == 0:
+            return render(request, 'movies/detail.html', {
+                'question': question,
+                'error_message': "You did not choose anything.",
+            })
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the question voting form.
         return render(request, 'movies/detail.html', {
@@ -47,12 +58,27 @@ def vote(request, question_id):
             'error_message': "You did not choose anything.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
+        try:
+            voters = Voters.objects.filter(question_id=question_id,
+                                           username_id=request.user.id)
+            pprint(voters)
+            if not voters:
+                Voters.objects.create(question_id=question_id,
+                                      username_id=request.user.id)
+                for x in selected_choice:
+                    x.votes += 1
+                    x.save()
+            else:
+                return render(request, 'movies/cheater.html')
+        except Exception as e:
+            pprint(e)
+            raise
+
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('movies:results', args=(question.id,)))
+        return HttpResponseRedirect(
+            reverse('movies:results', args=(question.id,)))
 
 
 # @login_required
