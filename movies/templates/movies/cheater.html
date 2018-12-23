@@ -1,1 +1,8 @@
-    <p>You have already made a call.</p>
+<p>You have already made a call.</p>
+<form action="{% url 'movies:index' %}">
+    <input type="submit" value="Movies"/>
+</form>
+{#<form action="{% url 'movies:detail' question.id %}">#}
+{#    <input type="submit" value="Try again with the same resutls"/>#}
+{#</form>#}
+<h1>{{ question.question_text }}</h1>

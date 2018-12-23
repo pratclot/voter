@@ -6,4 +6,9 @@
 {% endfor %}
 </ul>
 
-<a href="{% url 'movies:detail' question.id %}">Vote again?</a>
+<form action="{% url 'movies:detail' question.id %}">
+    <input type="submit" value="Vote"/>
+</form>
+<form action="{% url 'movies:index' %}">
+    <input type="submit" value="Movies"/>
+</form>
