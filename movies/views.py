@@ -9,14 +9,20 @@ from .models import Choice, Question, Voters
 
 
 class AuthListView(LoginRequiredMixin, generic.ListView):
-    pass
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    # pass
 
 
 class AuthDetailView(LoginRequiredMixin, generic.DetailView):
-    pass
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    # pass
 
 
-class IndexView(AuthListView):
+class IndexView(LoginRequiredMixin, generic.ListView, ):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     template_name = 'movies/index.html'
     context_object_name = 'latest_question_list'
 
@@ -25,7 +31,9 @@ class IndexView(AuthListView):
         return Question.objects.order_by('-pub_date')[:5]
 
 
-class DetailView(AuthDetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Question
     template_name = 'movies/detail.html'
 

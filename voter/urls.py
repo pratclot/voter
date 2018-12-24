@@ -23,12 +23,13 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     path('movies/', include('movies.urls'), name='movies'),
     path('admin/', admin.site.urls),
-    # url(r'^admin/', admin.site.urls),
+    path('admin', admin.site.urls),
+    # url(r'^admin/?$', admin.site.urls),
     # url(r'^movies/', admin.site.urls, name='movies'),
-    url(r'^login/$', views_auth.LoginView.as_view(), name='login'),
-    url(r'^logout/$', views_auth.LogoutView.as_view(), name='logout'),
+    url(r'^login/?$', views_auth.LoginView.as_view(), name='login'),
+    url(r'^logout/?$', views_auth.LogoutView.as_view(), name='logout'),
     url(r'^auth/', include('social_django.urls', namespace='social')),
-    # url(r'^.+$',
-    #     RedirectView.as_view(url='movies', permanent=False),
-    # )
+    url(r'^.*$',
+        RedirectView.as_view(url='movies/', permanent=False),
+    )
 ]
