@@ -106,3 +106,4 @@ venv.bak/
 # settings
 my.cnf
 auth.py
+movies/migrations/

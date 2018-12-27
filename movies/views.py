@@ -5,88 +5,51 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from pprint import pprint
 
-from .models import Choice, Question, Voters
+from .models import Poll, PollVoters, PollVotes, Answer
 
 
 class AuthListView(LoginRequiredMixin, generic.ListView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    # pass
 
 
 class AuthDetailView(LoginRequiredMixin, generic.DetailView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    # pass
 
 
-class IndexView(LoginRequiredMixin, generic.ListView, ):
+class PollsView(LoginRequiredMixin, generic.ListView, ):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    template_name = 'movies/index.html'
+    template_name = 'movies/polls.html'
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return Question.objects.order_by('-pub_date')[:5]
+        return Poll.objects.order_by('-poll_date')[:5]
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView):
+class PollDetailView(LoginRequiredMixin, generic.DetailView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    model = Question
-    template_name = 'movies/detail.html'
+    model = Poll
+    template_name = 'movies/poll_detail.html'
+    context_object_name = 'question'
 
 
-class ResultsView(AuthDetailView):
-    model = Question
-    template_name = 'movies/results.html'
+class PollResultsView(AuthDetailView):
+    model = Poll
+    template_name = 'movies/poll_results.html'
+    context_object_name = 'poll'
 
-
-def vote(request, question_id):
-    ...  # same as above, no changes needed.
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected = request.POST.getlist('choice')
-    except Exception as e:
-        print(e)
-    try:
-        selected_choice = [
-            question.choice_set.get(pk=x) for x in selected
-        ]
-        if len(selected_choice) == 0:
-            return render(request, 'movies/detail.html', {
-                'question': question,
-                'error_message': "You did not choose anything.",
-            })
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'movies/detail.html', {
-            'question': question,
-            'error_message': "You did not choose anything.",
-        })
-    else:
-        try:
-            voters = Voters.objects.filter(question_id=question_id,
-                                           username_id=request.user.id)
-            pprint(voters)
-            if not voters:
-                Voters.objects.create(question_id=question_id,
-                                      username_id=request.user.id)
-                for x in selected_choice:
-                    x.votes += 1
-                    x.save()
-            else:
-                return render(request, 'movies/cheater.html')
-        except Exception as e:
-            pprint(e)
-            raise
-
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(
-            reverse('movies:results', args=(question.id,)))
+    def get_context_data(self, **kwargs):
+        ctx = super(PollResultsView, self).get_context_data(**kwargs)
+        ctx['poll_votes'] = {x: Answer.objects.get(pk=x.answer_id) for x in
+                             PollVotes.objects.filter(
+                                 poll_id=ctx[
+                                     self.context_object_name]).only('id',
+                                                                     'answer_id')}
+        return ctx
 
 
 # @login_required
@@ -98,3 +61,40 @@ def home(request):
 #
 # def logout(request):
 # 	return render(request, 'registration/logout.html')
+
+
+def vote2(request, poll_id):
+    question = get_object_or_404(Poll, pk=poll_id)
+    poll_votes = get_object_or_404(PollVotes, pk=poll_id)
+    try:
+        selected = request.POST.getlist('choice')
+    except Exception as e:
+        print(e)
+    selected_choice = [
+        question.answers.get(pk=x) for x in selected
+    ]
+    if len(selected_choice) == 0:
+        return render(request, 'movies/poll_detail.html', {
+            'question': question,
+            'error_message': "You did not choose anything, dummy.",
+        })
+    else:
+        try:
+            voters = PollVoters.objects.filter(poll_id=poll_id,
+                                               username_id=request.user.id)
+            if not voters:
+                PollVoters.objects.create(poll_id=poll_id,
+                                          username_id=request.user.id)
+                for x in selected_choice:
+                    current_vote = PollVotes.objects.get(answer_id=x.id,
+                                                         poll_id=poll_id)
+                    current_vote.votes += 1
+                    current_vote.save()
+            else:
+                return render(request, 'movies/cheater.html')
+        except Exception as e:
+            pprint(e)
+            raise
+
+    return HttpResponseRedirect(
+        reverse('movies:poll_results', args=(question.id,)))

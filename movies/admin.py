@@ -1,19 +1,24 @@
 from django.contrib import admin
 
-from .models import Question, Choice
+from .models import Poll, Answer
 
 
-class ChoiceInline(admin.StackedInline):
-    model = Choice
-    extra = 3
+class AnswerInline(admin.TabularInline):
+    model = Poll.answers.through
+    extra = 5
 
 
-class QuestionAdmin(admin.ModelAdmin):
+class PollAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['question_text']}),
-        ('Date information', {'fields': ['pub_date']}),
+        (None,               {'fields': ['poll_question']}),
+        ('Date information', {'fields': ['poll_date']}),
     ]
-    inlines = [ChoiceInline]
+    inlines = (AnswerInline,)
 
 
-admin.site.register(Question, QuestionAdmin)
+class AnswerAdmin(admin.ModelAdmin):
+    fields = ('answer_text',)
+
+
+admin.site.register(Poll, PollAdmin)
+admin.site.register(Answer, AnswerAdmin)

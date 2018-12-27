@@ -30,6 +30,6 @@ urlpatterns = [
     url(r'^logout/?$', views_auth.LogoutView.as_view(), name='logout'),
     url(r'^auth/', include('social_django.urls', namespace='social')),
     url(r'^.*$',
-        RedirectView.as_view(url='movies/', permanent=False),
+        RedirectView.as_view(url='/movies/polls/', permanent=False),
     )
 ]
