@@ -1,0 +1,15 @@
+<h1>{{ question.poll_question }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'movies:vote2' question.id %}" method="post">
+{% csrf_token %}
+{% for choice in question.answers.all %}
+    <input type="checkbox" name="choice" id="choice{{ forloop.counter }}"
+           value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">
+        {{ choice.answer_text }}</label><br>
+{% endfor %}
+<input type="submit" value="Vote">
+</form>
+<a href="{% url 'movies:poll_results' question.id %}">Results</a>
