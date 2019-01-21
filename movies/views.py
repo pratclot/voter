@@ -65,7 +65,6 @@ def home(request):
 
 def vote2(request, poll_id):
     question = get_object_or_404(Poll, pk=poll_id)
-    poll_votes = get_object_or_404(PollVotes, pk=poll_id)
     try:
         selected = request.POST.getlist('choice')
     except Exception as e:

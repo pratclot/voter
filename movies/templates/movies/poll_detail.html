@@ -12,4 +12,7 @@
 {% endfor %}
 <input type="submit" value="Vote">
 </form>
-<a href="{% url 'movies:poll_results' question.id %}">Results</a>
+<form action="{% url 'movies:poll_results' question.id %}">
+    <input type="submit" value="Results"/>
+</form>
+{#<a href="{% url 'movies:poll_results' question.id %}">Results</a>#}

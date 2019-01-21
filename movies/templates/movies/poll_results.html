@@ -7,5 +7,7 @@
         vote{{ poll_vote.votes|pluralize }}</li>
 {% endfor %}
 </ul>
-
-<a href="{% url 'movies:poll_detail' poll.id %}">Vote again?</a>
+<form action="{% url 'movies:poll_detail' poll.id %}">
+    <input type="submit" value="Vote again?"/>
+</form>
+{#<a href="{% url 'movies:poll_detail' poll.id %}">Vote again?</a>#}
