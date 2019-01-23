@@ -7,6 +7,7 @@ from pprint import pprint
 import logging
 
 from .models import Poll, PollVoters, PollVotes, Answer
+from django.contrib.auth.models import User
 
 logger = logging.getLogger('django')
 
@@ -50,26 +51,40 @@ class PollResultsView(AuthDetailView):
         ctx['poll_votes'] = {x: Answer.objects.get(pk=x.answer_id) for x in
                              PollVotes.objects.filter(
                                  poll_id=ctx[
-                                     self.context_object_name]).only('id',
-                                                                     'answer_id')}
+                                     self.context_object_name]).only(
+                                 'id',
+                                 'answer_id')
+                             }
         ctx['answers'] = [x.answer_text for x in ctx['poll_votes'].values()]
-#        logger.debug(ctx['answers'])
-#        [logger.debug(x) for x in ctx['answers']]
+        #        logger.debug(ctx['answers'])
+        #        [logger.debug(x) for x in ctx['answers']]
         ctx['votes'] = [x.votes for x in ctx['poll_votes'].keys()]
-        ctx['chart_data'] = [{'name': y.answer_text, 'value': x.votes} for x, y in ctx['poll_votes'].items()]
-        ctx['chart_selected'] = {y.answer_text: x.votes for x, y in ctx['poll_votes'].items()}
+        ctx['chart_data'] = [{'name': y.answer_text, 'value': x.votes}
+                             for x, y in ctx['poll_votes'].items()]
+        ctx['chart_selected'] = {y.answer_text: x.votes
+                                 for x, y in ctx['poll_votes'].items()}
+        username_ids = PollVoters.objects.filter(
+            poll_id=ctx[
+                self.context_object_name
+            ]
+        ).only('username_id')
+        pprint(username_ids)
+        pprint(User.objects.all().only('id', 'username'))
+        ctx['voters'] = {x.username: 1 if y.username_id == x.id else 0
+                         for x in User.objects.all().only('id', 'username')
+                         for y in username_ids}
+        pprint(ctx['voters'])
         return ctx
 
+    # @login_required
+    def home(request):
+        return render(request, 'home.html')
 
-# @login_required
-def home(request):
-    return render(request, 'home.html')
-
-# def login(request):
-# 	return render(request, 'registration/login.html')
-#
-# def logout(request):
-# 	return render(request, 'registration/logout.html')
+    # def login(request):
+    # 	return render(request, 'registration/login.html')
+    #
+    # def logout(request):
+    # 	return render(request, 'registration/logout.html')
 
 
 def vote2(request, poll_id):
