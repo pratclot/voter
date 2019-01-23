@@ -19,6 +19,9 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as views_auth
 from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('movies/', include('movies.urls'), name='movies'),
@@ -32,4 +35,5 @@ urlpatterns = [
     url(r'^.*$',
         RedirectView.as_view(url='/movies/polls/', permanent=False),
     )
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

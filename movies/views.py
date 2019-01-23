@@ -68,12 +68,10 @@ class PollResultsView(AuthDetailView):
                 self.context_object_name
             ]
         ).only('username_id')
-        pprint(username_ids)
-        pprint(User.objects.all().only('id', 'username'))
-        ctx['voters'] = {x.username: 1 if y.username_id == x.id else 0
-                         for x in User.objects.all().only('id', 'username')
-                         for y in username_ids}
-        pprint(ctx['voters'])
+        ctx['voters'] = [{'name': x.username, 'value': 1 if any(y.username_id == x.id for y in username_ids) else 0}
+                         for x in User.objects.all().only('id', 'username')]
+        ctx['all_voters'] = [x['name'] for x in ctx['voters']]
+        ctx['current_voters'] = [x['value'] for x in ctx['voters']]
         return ctx
 
     # @login_required

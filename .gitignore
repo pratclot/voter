@@ -107,3 +107,6 @@ venv.bak/
 my.cnf
 auth.py
 movies/migrations/
+supervisord.*
+debug.log
+static/

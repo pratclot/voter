@@ -31,6 +31,10 @@ docker-compose up -d
 ```bash
 docker-compose exec voter python manage.py migrate
 ```
+- collect all static files and put them into STATIC_ROOT:
+```bash
+docker-compose exec voter python manage.py collectstatic
+```
 - restart the container:
 ```bash
 docker-compose restart
