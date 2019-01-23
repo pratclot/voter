@@ -105,7 +105,7 @@ venv.bak/
 
 # settings
 my.cnf
-auth.py
+voter/auth.py
 movies/migrations/
 supervisord.*
 debug.log
