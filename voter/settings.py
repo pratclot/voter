@@ -152,8 +152,8 @@ AUTHENTICATION_BACKENDS = (
     # 'social_core.backends.google.GoogleOpenId',  # for Google authentication
     'social_core.backends.google.GoogleOAuth2',  # for Google authentication
     'social_core.backends.github.GithubOAuth2',  # for Github authentication
-    # 'social_core.backends.facebook.FacebookOAuth2',
-    # for Facebook authentication
+    # 'social_core.backends.facebook.FacebookOAuth2', for Facebook authentication
+    'social_core.backends.telegram.TelegramAuth',
 
     'django.contrib.auth.backends.ModelBackend',
 )
