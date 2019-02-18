@@ -9,6 +9,9 @@ from pprint import pprint
 class Answer(models.Model):
     answer_text = models.CharField(max_length=200)
 
+    def __str__(self):              
+        return self.answer_text
+
 
 class Poll(models.Model):
     poll_question = models.CharField(max_length=200)
@@ -28,6 +31,9 @@ class Poll(models.Model):
             [PollVotes.objects.create(poll=self,
                                       answer=x) for x in new_answers]
             # self.answers.add(new_answer)
+
+    def __str__(self):              
+        return self.poll_question
 
 
 class PollVotes(models.Model):
