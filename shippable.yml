@@ -7,13 +7,17 @@ branches:
   only:
     - develop
 
-env:
-  vps:
-
 resources:
-  - name: ship_gae
-    type: cliConfig
-    integration: ship_gae_svc
-    versionTemplate:
-      region: "europe-west3"
+  - name:           gae
+    type:           integration
+    integration:    https://app.shippable.com/subs/github/pratclot/integrations
+jobs:
+  - name:           gae_job
+    type:           runSh
+    steps:
+      - IN:         gae
+      - TASK:
+        - script:   env | sort
+        - script:   shipctl
+        - script:   shippable/deploy.sh
 
