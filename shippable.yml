@@ -1,0 +1,19 @@
+language: python
+
+python:
+  - 3.7
+
+branches:
+  only:
+    - develop
+
+env:
+  vps:
+
+resources:
+  - name: ship_gae
+    type: cliConfig
+    integration: ship_gae_svc
+    versionTemplate:
+      region: "europe-west3"
+

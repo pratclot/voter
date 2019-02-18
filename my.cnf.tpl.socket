@@ -1,0 +1,7 @@
+[client]
+socket = ${MYSQL_SOCKET}
+database = ${MYSQL_DB}
+user = ${MYSQL_USER}
+PASSWORD = ${MYSQL_PASS}
+DEFAULT-character-set = utf8
+
