@@ -83,7 +83,7 @@ celerybeat-schedule
 
 # Environments
 .env
-.venv
+.venv*
 env/
 venv/
 ENV/
@@ -110,3 +110,4 @@ movies/migrations/
 supervisord.*
 debug.log
 static/
+cloud_sql_proxy
