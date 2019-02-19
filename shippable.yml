@@ -10,15 +10,15 @@ branches:
 script:
   - env | sort
 
-resources:
-  - name:           gae_int
-    type:           integration
-    integration:    https://app.shippable.com/subs/github/pratclot/integrations
+#resources:
+#  - name:           gae_int
+#    type:           integration
+#    integration:    https://app.shippable.com/subs/github/pratclot/integrations
 jobs:
   - name:           gae_job
     type:           runSh
     steps:
-      - IN:         gae_int
+#      - IN:         gae_int
       - TASK:
         - script:   env | sort
         - script:   shipctl
