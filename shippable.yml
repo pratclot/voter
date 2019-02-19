@@ -7,6 +7,9 @@ branches:
   only:
     - develop
 
+script:
+  - env | sort
+
 resources:
   - name:           gae
     type:           integration
