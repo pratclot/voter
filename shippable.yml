@@ -11,7 +11,7 @@ script:
   - env | sort
 
 resources:
-  - name:           gae
+  - name:           gae_int
     type:           integration
     integration:    https://app.shippable.com/subs/github/pratclot/integrations
 jobs:
