@@ -21,6 +21,6 @@ jobs:
 #      - IN:         gae_int
       - TASK:
         - script:   env | sort
-        - script:   shipctl
+        - script:   shipctl copy_file_from_prev_state "config.json" .
         - script:   shippable/deploy.sh
 
